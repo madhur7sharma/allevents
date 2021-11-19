@@ -1,0 +1,98 @@
+.mainDiv{
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    justify-content: space-evenly;
+    grid-row-gap: 36px;
+    margin-top: 150px;
+    padding: 18px;
+}
+
+.menuItems{
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 20px;
+}
+.menuItems:hover{
+    background-color: rgb(165, 165, 165);
+    border-bottom: solid 2px rgb(255, 255, 255);
+}
+span{
+    padding: 6px;
+    border-radius: 12px;
+}
+
+.menuItemsTrue{
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 20px;
+    border-bottom: solid 3px rgb(255, 255, 255);
+}
+.menuItemsTrue:hover{
+    background-color: rgb(165, 165, 165);
+}
+
+
+
+
+.topDiv{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+}
+.TopBarDiv{
+    user-select: none;
+    background-color: #111827;
+    color: white;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+    min-height: 66px;
+    padding: 24px;
+}
+.topBottomBar{
+    user-select: none;
+    color: white;
+    width: 100%;
+    height: 50px;
+    background-color: #555658;
+    display: flex;
+    align-items: center;
+    padding-left: 30px;
+    padding-bottom: 6px;
+    border-radius: 0 0 14px 14px;
+}
+
+
+
+@media(max-width : 1300px){
+    .mainDiv{
+        grid-template-columns: auto auto auto;
+    }
+}
+
+@media(max-width : 1000px){
+    .mainDiv{
+        grid-template-columns: auto auto;
+    }
+}
+
+@media(max-width : 700px){
+    .mainDiv{
+        grid-template-columns: auto;
+    }
+}
+
+@media(max-width : 600px){
+    .mainDiv{
+        margin-top: 200px;
+    }
+    .TopBarDiv{
+        padding: 14px;
+    }.topBottomBar{
+        padding-left: 18px;;
+    }
+}

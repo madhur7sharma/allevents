@@ -1,0 +1,18 @@
+.mainDiv{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 90%;
+    justify-content: space-evenly;
+    grid-row-gap: 36px;
+    margin-top: 150px;
+    padding: 18px;
+}
+
+
+@media(max-width : 600px){
+    .mainDiv{
+        margin-top: 200px;
+    }
+}
+
+
