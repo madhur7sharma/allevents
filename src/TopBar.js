@@ -1,126 +1,165 @@
 import classes from './All.module.css'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import axios from "axios";
+import TopBottomBar from './TopBottomBar';
+import List from './List';
 
-export default function TopBar({allEvents, setAllEvents, music, setMusic, business, setBusiness, sports, setSports, workshop, setWorkshop,}) {
+export default function TopBar() {
 
-    const AllEvents = () => {
-        setAllEvents(true)
-        setMusic(false)
-        setBusiness(false)
-        setSports(false)
-        setWorkshop(false)
-    }
-    const Music = () => {
-        setAllEvents(false)
-        setMusic(true)
-        setBusiness(false)
-        setSports(false)
-        setWorkshop(false)
-    }
-    const Business = () => {
-        setAllEvents(false)
-        setMusic(false)
-        setBusiness(true)
-        setSports(false)
-        setWorkshop(false)
-    }
-    const Sports = () => {
-        setAllEvents(false)
-        setMusic(false)
-        setBusiness(false)
-        setSports(true)
-        setWorkshop(false)
-    }
-    const WorkShops = () => {
-        setAllEvents(false)
-        setMusic(false)
-        setBusiness(false)
-        setSports(false)
-        setWorkshop(true)
-    }
+    const categoryUrl = 'https://allevents.s3.amazonaws.com/tests/categories.json'
+    const [product , setProduct] = useState(null)
+    useEffect(() => {
+        axios.get(categoryUrl)
+            .then(response => {
+                setProduct(response.data)
+            })
+    }, [categoryUrl])
 
-    const savedValue = JSON.parse(localStorage.getItem('allevents'))
+    const [category, setCategory] = useState('')
+
+    const [url, setUrl] = useState(localStorage.getItem('url')) 
+
+    useEffect(()=>{
+        if(category)
+        {
+            product.map((item)=>{
+                if(item.category === category)
+                {
+                    setUrl(item.data)
+                }
+            })
+        }
+    },[category])
+
+
+    useEffect(()=>{
+        if(category)
+        {
+            product.map((item)=>{
+                if(item.category === category)
+                {
+                    if(url)
+                    {
+                        localStorage.setItem('url',item.data)
+                    }
+                }
+            })
+        }
+    }) 
+
+    
+    const [productData, setProductData] = useState(null)
+
+    const urlAll = `${url}`
 
     useEffect(() => {
-        if(music)
+        if(urlAll !== '')
         {
-          localStorage.setItem('allevents',false)
-          localStorage.setItem('music',true)
-          localStorage.setItem('business',false)
-          localStorage.setItem('sports',false)
-          localStorage.setItem('workshop',false)
+            axios.get(urlAll)
+                .then(response => {
+                    setProductData(response.data)
+                })
         }
-        else if(business)
-        {
-          localStorage.setItem('allevents',false)
-          localStorage.setItem('music',false)
-          localStorage.setItem('business',true)
-          localStorage.setItem('sports',false)
-          localStorage.setItem('workshop',false)
-        }
-        else if(sports)
-        {
-          localStorage.setItem('allevents',false)
-          localStorage.setItem('music',false)
-          localStorage.setItem('business',false)
-          localStorage.setItem('sports',true)
-          localStorage.setItem('workshop',false)
-        }
-        else if(workshop)
-        {
-          localStorage.setItem('allevents',false)
-          localStorage.setItem('music',false)
-          localStorage.setItem('business',false)
-          localStorage.setItem('sports',false)
-          localStorage.setItem('workshop',true)
-        }
-        else if(!savedValue)   //for world
-        {
-          setAllEvents(true)
-          localStorage.setItem('allevents',true)
-          localStorage.setItem('music',false)
-          localStorage.setItem('business',false)
-          localStorage.setItem('sports',false)
-          localStorage.setItem('workshop',false)
-        }
-      })
+    }, [urlAll])
+
+    const [eventName, setEventName] = useState('')
+
+    const [listView, setListView] = useState(localStorage.getItem('listView')==='true')
+    
     
 
     return (
-        <div className={classes.TopBarDiv}>
-            {
-                allEvents ? 
-                <span onClick={AllEvents} className={classes.menuItemsTrue}>All Events</span>
-                :
-                <span onClick={AllEvents} className={classes.menuItems}>All Events</span>
-            }
-            {
-                music ?
-                <span onClick={Music} className={classes.menuItemsTrue}>Music</span>
-                :
-                <span onClick={Music} className={classes.menuItems}>Music</span>
-            }
-            {
-                business ?
-                <span onClick={Business} className={classes.menuItemsTrue}>Business</span>
-                :
-                <span onClick={Business} className={classes.menuItems}>Business</span>
-            }
-            {
-                sports ?
-                <span onClick={Sports} className={classes.menuItemsTrue}>Sports</span>
-                :
-                <span onClick={Sports} className={classes.menuItems}>Sports</span>
-            }
-            {
-                workshop ?
-                <span onClick={WorkShops} className={classes.menuItemsTrue}>WorkShops</span>
-                :
-                <span onClick={WorkShops} className={classes.menuItems}>WorkShops</span>
-            }
-            <div className="ml-auto hidden md:block">
-                <img className="w-52" src="https://allevents.in/img/ae-logo-website.png" alt="logo"/>
+        <>
+            <div className={classes.topDiv}> 
+                <div className={classes.TopBarDiv}>
+                    {
+                        product ?
+                        product.map((item,pos) => {
+                            return(
+                                <>
+                                    {
+                                        url === item.data ?
+                                        <span key={pos} onClick={()=>(setCategory(item.category),setEventName(''))} className={classes.menuItemsTrue}>{item.category}</span>
+                                        :
+                                        <span key={pos} onClick={()=>(setCategory(item.category),setEventName(''))} className={classes.menuItems}>{item.category}</span>
+                                    }
+                                </>
+                            )
+                        })
+                        :
+                        null
+                    }
+                    <div className="ml-auto hidden md:block">
+                        <img className="w-52" src="https://allevents.in/img/ae-logo-website.png" alt="logo"/>
+                    </div>
+                </div>
+                <div>
+                    <TopBottomBar listView={listView} setListView={setListView}/>
+                </div>
             </div>
-        </div>
+            {
+                !listView ?
+                <div>
+                    {
+                        productData && eventName === '' ?
+                        <div className={classes.mainDiv}>
+                            {
+                                productData.item.map((item,pos)=>{
+                                    return(
+                                        <div className="flex flex-col flex-warp items-center w-72 h-96 bg-blue-100 rounded-2xl overflow-hidden" key={pos}>
+                                            <div className="p-2">
+                                                <img src={item.thumb_url} alt="event-banner" />
+                                            </div>
+                                            <div className="-mt-2 px-2 text-center font-bold">
+                                                <h3>{item.eventname_raw}</h3>
+                                            </div>
+                                            <div className="mt-2">
+                                                <button onClick={()=>setEventName(item.eventname_raw)} className="bg-blue-500 text-white font-bold py-2 px-16  rounded shadow border-blue-500 hover:bg-transparent hover:text-blue-500 transition-all duration-300">Details</button>
+                                            </div>
+                                        </div>  
+                                    )
+                                })
+                            }
+                        </div>
+                        :
+                        productData && eventName !== '' ?
+                        <>
+                            {
+                                productData.item.map((item) => {
+                                    if(item.eventname_raw === eventName)
+                                    {
+                                        return(
+                                            <div key={item.event_id} className="flex flex-col text-center rounded-lg shadow border-solid border-2 border-blue-200 mx-10 my-10 p-10 mt-56 items-center">
+                                                <div>
+                                                    <img className="rounded-lg mb-5" src={item.banner_url} alt="Event Banner"/>
+                                                </div>
+                                                <p className="font-bold text-2xl mb-5">{item.eventname_raw}</p>
+                                                <p className="text-lg mb-2">Event Start Time: &nbsp;{item.start_time_display}</p>
+                                                <p className="text-lg mb-2">Event End Time: &nbsp;{item.end_time_display}</p>
+                                                <p className="font-bold mt-2 text-lg">Location</p>
+                                                <p className="text-lg mb-2">{item.location}</p>
+                                                <p className="font-bold text-lg mt-2">Venue</p>
+                                                <p className="text-lg mb-2">City: {item.venue.city}</p>
+                                                <p className="text-lg mb-2">State: {item.venue.state}</p>
+                                                <p className="text-lg mb-2">Country: {item.venue.country}</p>
+                                                <button className="mt-5 bg-blue-500 text-white font-bold py-2 px-16 rounded shadow border-blue-500 hover:bg-transparent hover:text-blue-500 transition-all duration-300"><a target="_blank" rel="noopener noreferrer" href={item.tickets.ticket_url}>Book Tickets</a></button>
+                                                <button className="mt-5 bg-blue-500 text-white font-bold py-2 px-16 rounded shadow border-blue-500 hover:bg-transparent hover:text-blue-500 transition-all duration-300" onClick={()=>setEventName('')}>Hide Details</button>
+                                            </div>
+                                        )
+                                    }
+                                })
+                            }
+                        </>
+                        :
+                        null
+                    }
+                </div>
+                :
+                <List url={url}/>
+            }
+        </>
     )
 }
+
+
+

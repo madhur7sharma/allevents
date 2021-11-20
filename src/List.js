@@ -1,56 +1,59 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
 import axios from "axios";
-import classes from './All.module.css'
-import { Spinner } from "react-bootstrap";
+import classes from './ListView.module.css'
 
-export default function Business() {
+export default function List({url}) {
 
-    const urlALL = 'https://allevents.s3.amazonaws.com/tests/business.json'
-    const [product , setProduct] = useState(null)
     
+    const [productData, setProductData] = useState(null)
+
+    const urlAll = `${url}`
+
     useEffect(() => {
-        axios.get(urlALL)
-            .then(response => {
-                setProduct(response.data)
-            })
-    }, [urlALL])
+        if(urlAll !== '')
+        {
+            axios.get(urlAll)
+                .then(response => {
+                    setProductData(response.data)
+                })
+        }
+    }, [urlAll])
 
     const [eventName, setEventName] = useState('')
+    
 
-    if(product)
-    {
-        const BusinessEvents = product.item.map((item , pos) => {
-            return(
-                <>
-                    <div className="flex flex-col flex-warp items-center w-72 h-96 bg-blue-100 rounded-2xl overflow-hidden" key={pos}>
-                        <div className="p-2">
-                            <img src={item.thumb_url} alt="event-banner" />
-                        </div>
-                        <div className="-mt-2 px-2 text-center font-bold">
-                            <h3>{item.eventname_raw}</h3>
-                        </div>
-                        <div className="mt-2">
-                            <button onClick={()=>setEventName(item.eventname_raw)} className="bg-blue-500 text-white font-bold py-2 px-16  rounded shadow border-blue-500 hover:bg-transparent hover:text-blue-500 transition-all duration-300">Details</button>
-                        </div>
-                    </div>
-                </>
-            )
-        })
-        return (
-            <>
+    return (
+        <>
+            <div className={classes.mainDiv}>
                 {
-                    eventName == '' ?
-                    <div className={classes.mainDiv}>
-                        {BusinessEvents}
-                    </div>
+                    productData && eventName === '' ?
+                    productData.item.map((item,pos)=>{
+                        return(
+                            <div className="flex flex-col sm:flex-row items-center justify-evenly w-full min-h-24 bg-blue-100 rounded-2xl overflow-hidden p-4" key={item.event_id}>
+                                <div className="px-2 text-center text-lg">
+                                    <h3>{item.eventname_raw}</h3>
+                                </div> 
+                                <div className="px-2 text-center text-lg mt-2 sm:mt-0 font-bold">
+                                    <h3>{item.label}</h3>
+                                </div> 
+                                <div className="px-2 text-center mt-2 sm:mt-0 text-lg">
+                                    <h3>{item.venue.city}, {item.venue.state}</h3>
+                                </div>
+                                <div>
+                                    <button onClick={()=>setEventName(item.eventname_raw)} className="mt-2 sm:mt-0 bg-blue-500 text-white font-bold py-2 px-16 rounded shadow border-blue-500 hover:bg-transparent hover:text-blue-500 transition-all duration-300">Details</button>
+                                </div>
+                            </div>
+                        )
+                    })
                     :
+                    productData && eventName !== '' ?
                     <>
                         {
-                            product.item.map((item,pos) => {
+                            productData.item.map((item) => {
                                 if(item.eventname_raw === eventName)
                                 {
                                     return(
-                                        <div key={pos} className="flex flex-col text-center rounded-lg shadow border-solid border-2 border-blue-200 mx-10 my-10 p-10 mt-56 items-center">
+                                        <div key={item.event_id} className="flex flex-col text-center rounded-lg shadow border-solid border-2 border-blue-200 mx-10 my-10 p-10 mt-56 items-center">
                                             <div>
                                                 <img className="rounded-lg mb-5" src={item.banner_url} alt="Event Banner"/>
                                             </div>
@@ -71,15 +74,13 @@ export default function Business() {
                             })
                         }
                     </>
+                    :
+                    null
                 }
-            </>
-        )
-    }
-    return(
-        <div className="flex flex-col items-center">
-            <p className="mt-64 mx-auto font-bold uppercase text-xl">Loading Events Please Wait...</p>
-            <Spinner className="mt-4 mx-auto" animation="border" variant="dark" />
-        </div>
+            </div>
+        </>
     )
-    
 }
+
+
+

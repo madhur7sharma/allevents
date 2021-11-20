@@ -12,6 +12,7 @@
     font-size: 20px;
     cursor: pointer;
     margin-left: 20px;
+    text-transform: capitalize;
 }
 .menuItems:hover{
     background-color: rgb(165, 165, 165);
@@ -24,6 +25,7 @@ span{
 
 .menuItemsTrue{
     font-size: 20px;
+    text-transform: capitalize;
     cursor: pointer;
     margin-left: 20px;
     border-bottom: solid 3px rgb(255, 255, 255);
