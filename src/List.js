@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import axios from "axios";
 import classes from './ListView.module.css'
+import { Spinner } from "react-bootstrap";
 
 export default function List({url}) {
 
@@ -75,7 +76,10 @@ export default function List({url}) {
                         }
                     </>
                     :
-                    null
+                    <div className="flex flex-col items-center">
+                        <Spinner animation="border" variant="dark" />
+                        <p className="mt-4 text-xl uppercase">Loading Events...</p>
+                    </div>
                 }
             </div>
         </>

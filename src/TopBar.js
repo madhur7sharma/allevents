@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import axios from "axios";
 import TopBottomBar from './TopBottomBar';
 import List from './List';
+import { Spinner } from "react-bootstrap";
 
 export default function TopBar() {
 
@@ -16,6 +17,10 @@ export default function TopBar() {
     }, [categoryUrl])
 
     const [category, setCategory] = useState('')
+    if(localStorage.getItem('url')=== undefined || localStorage.getItem('url')=== null || localStorage.getItem('url') === '')
+    {
+        localStorage.setItem('url','https://allevents.s3.amazonaws.com/tests/all.json')
+    }
 
     const [url, setUrl] = useState(localStorage.getItem('url')) 
 
@@ -31,6 +36,7 @@ export default function TopBar() {
         }
     },[category])
 
+    
 
     useEffect(()=>{
         if(category)
@@ -87,7 +93,10 @@ export default function TopBar() {
                             )
                         })
                         :
-                        null
+                        <div className="flex items-center">
+                            <Spinner animation="border" variant="light" />
+                            <p className="ml-4 text-lg uppercase">Loading categories...</p>
+                        </div>
                     }
                     <div className="ml-auto hidden md:block">
                         <img className="w-52" src="https://allevents.in/img/ae-logo-website.png" alt="logo"/>
@@ -151,7 +160,10 @@ export default function TopBar() {
                             }
                         </>
                         :
-                        null
+                        <div className="mt-48 flex flex-col items-center">
+                            <Spinner animation="border" variant="dark" />
+                            <p className="mt-4 text-xl uppercase">Loading Events...</p>
+                        </div>
                     }
                 </div>
                 :
